@@ -1,0 +1,98 @@
+*vim-stats.txt*  Unobtrusive usage tracking for Vim
+
+Author:  AquiGorka
+License: MIT
+
+INTRODUCTION                                    *vim-stats*
+
+vim-stats tracks your Vim usage patterns to help you optimize your
+configuration. It records command usage, mapping usage, and detects
+potential typos - all without affecting performance.
+
+COMMANDS                                        *vim-stats-commands*
+
+:VimStats [days]                                *:VimStats*
+    Display usage statistics for the last [days] days (default: 7).
+    Shows session summaries, top commands, and top mappings.
+
+:VimStatsTypos                                  *:VimStatsTypos*
+    Display detected typos - sequences that failed then succeeded
+    with minor changes.
+
+:VimStatsUnused                                 *:VimStatsUnused*
+    Display mappings defined in your config that are never or rarely
+    used. Helps identify candidates for removal.
+
+:VimStatsMappings                               *:VimStatsMappings*
+    Display all mappings with their usage counts, sorted by frequency.
+
+:VimStatsCommands                               *:VimStatsCommands*
+    Display Ex command usage, grouped by category (file operations,
+    search/replace, navigation, etc.).
+
+:VimStatsEnable                                 *:VimStatsEnable*
+    Enable usage tracking.
+
+:VimStatsDisable                                *:VimStatsDisable*
+    Disable usage tracking.
+
+:VimStatsFlush                                  *:VimStatsFlush*
+    Manually flush buffered data to disk.
+
+:VimStatsClear                                  *:VimStatsClear*
+    Clear all collected statistics data.
+
+CONFIGURATION                                   *vim-stats-config*
+
+g:vim_stats_data_dir                            *g:vim_stats_data_dir*
+    Directory where statistics data is stored.
+    Default: ~/.vim/stats
+
+g:vim_stats_enabled                             *g:vim_stats_enabled*
+    Enable or disable tracking. Set to 0 to disable.
+    Default: 1
+
+g:vim_stats_flush_interval                      *g:vim_stats_flush_interval*
+    Interval in milliseconds between automatic data flushes.
+    Default: 30000 (30 seconds)
+
+g:vim_stats_max_buffer_size                     *g:vim_stats_max_buffer_size*
+    Maximum number of entries to buffer before forcing a flush.
+    Default: 100
+
+TRACKING CUSTOM MAPPINGS                        *vim-stats-tracking*
+
+To track your custom mappings with descriptions, you can wrap them:
+>
+    " Option 1: Inline tracking (slight overhead per use)
+    nnoremap <silent> S :call vim_stats#RecordMapping('S', 'save')<CR>:update<CR>
+
+    " Option 2: Expression mapping (zero overhead)
+    nnoremap <expr> S vim_stats#track#Expr('S', 'save file')
+<
+The plugin automatically tracks all Ex commands entered via the
+command line.
+
+DATA FILES                                      *vim-stats-data*
+
+Statistics are stored in JSON format:
+
+    commands-YYYY-MM-DD.json    Ex command counts per day
+    mappings-YYYY-MM-DD.json    Mapping usage counts per day
+    typos-YYYY-MM-DD.jsonl      Detected typo patterns
+    sessions.jsonl              Session start/end times
+
+PERFORMANCE                                     *vim-stats-performance*
+
+This plugin is designed for zero performance impact:
+
+- Uses Vim's async job system for all file I/O
+- Buffers data in memory, flushes periodically
+- No per-keystroke tracking
+- Autoload pattern ensures code loads only when needed
+
+LICENSE                                         *vim-stats-license*
+
+MIT License
+
+vim:tw=78:ts=8:ft=help:norl:
